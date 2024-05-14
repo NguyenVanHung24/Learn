@@ -73,7 +73,7 @@ class GameClient:
                     self.size = int(data.get("size"))
                     self.board = copy.deepcopy(data.get("board"))
                     # Lấy nước đi từ AI, nước đi là một tuple (i, j)
-                    move = get_move(self.board, self.size)
+                    move = get_move(self.board, self.size,False if self.team_roles == 'x' else True)
                     print("Move: ", move)
                     # Kiểm tra nước đi hợp lệ
                     valid_move = self.check_valid_move(move)
@@ -164,12 +164,14 @@ def get_data():
 if __name__ == "__main__":
     # Lấy địa chỉ server trọng tài từ người dùng
     # host = input("Enter server url: ")
-    host = "http://4.145.107.27:80"
+    #host = "http://4.145.107.27:80"
+    host = "http://127.0.0.1:80"
     room_id = input("Enter room id: ")
     your_team_id = input("Enter your team id: ")
     opponent_team_id = input("Enter opponent team id: ")
     team_roles = input("Enter your team role (x/o): ").lower()
     # Khởi tạo game client
+
     gameClient = GameClient(host, room_id, your_team_id, opponent_team_id, team_roles)
     gameClient.listen()
 
