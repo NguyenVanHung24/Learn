@@ -16,7 +16,7 @@ def get_move(board, size,player):
             elif boardcoppy[i][j] == 'o':
                 boardcoppy[i][j] = -1
     ai = AI(size,player)
-    available_moves = ai.calcNextMove(boardcoppy, 3)
+    available_moves = ai.determineNextMove(boardcoppy, 3)
     # for i in range(size):
     #     for j in range(size):
     #         if board[i][j] == ' ':

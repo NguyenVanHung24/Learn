@@ -21,7 +21,7 @@ class AI:
         self.player=player
 
     # Đánh giá điểm theo tình huống
-    def evaluateGameSituation(self, count, blocks, currentTurn):
+    def getConsecutiveSetScore(self, count, blocks, currentTurn):
         winGuarantee = 1000000
         if blocks == 2 and count <= 5:
             return 0
@@ -63,7 +63,7 @@ class AI:
             return 1
         return self.winScore * 2
 
-    def calculateHorizontalScore(self,boardMatrix,ForX,playersTurn) :
+    def evaluateHorizontal(self,boardMatrix,ForX,playersTurn) :
         consecutive = 0
         blocks = 2
         score = 0
@@ -84,7 +84,7 @@ class AI:
                     if consecutive > 0:
                         # Ra: Ô trống ở cuối sau khi đếm. Giảm block rồi bắt đầu tính điểm sau đó reset lại ban đầu
                         blocks -= 1
-                        score += self.evaluateGameSituation(consecutive, blocks, ForX == playersTurn)
+                        score += self.getConsecutiveSetScore(consecutive, blocks, ForX == playersTurn)
                         consecutive = 0
                         blocks = 1
                     else :
@@ -93,7 +93,7 @@ class AI:
                 #gặp quân địch
                 elif consecutive > 0:
                     # 2.Ra:  Ô bị chặn sau khi đếm. Tính điểm sau đó reset lại.
-                    score += self.evaluateGameSituation(consecutive, blocks, ForX == playersTurn)
+                    score += self.getConsecutiveSetScore(consecutive, blocks, ForX == playersTurn)
                     consecutive = 0
                     blocks = 2
                 else :
@@ -101,13 +101,13 @@ class AI:
                     blocks = 2
             # 3. Ra: nhưng lúc này đang ở cuối. Nếu liên tục thì vẫn tính cho đến hết dòng 
             if consecutive > 0:
-                score += self.evaluateGameSituation(consecutive, blocks, ForX == playersTurn)
+                score += self.getConsecutiveSetScore(consecutive, blocks, ForX == playersTurn)
             # reset lại để tiếp tục chạy cho dòng tiếp theo
             consecutive = 0
             blocks = 2
         return score
 
-    def calculateVerticalScore(self,boardMatrix,ForX,playersTurn ) :
+    def evaluateVertical(self,boardMatrix,ForX,playersTurn ) :
         consecutive = 0
         blocks = 2
         score = 0
@@ -127,7 +127,7 @@ class AI:
                     if consecutive > 0:
                         # Ra: Ô trống ở cuối sau khi đếm. Giảm block rồi bắt đầu tính điểm sau đó reset lại ban đầu
                         blocks -= 1
-                        score += self.evaluateGameSituation(consecutive, blocks, ForX == playersTurn)
+                        score += self.getConsecutiveSetScore(consecutive, blocks, ForX == playersTurn)
                         consecutive = 0
                         blocks = 1
                     else :
@@ -136,7 +136,7 @@ class AI:
                 #gặp quân địch
                 elif consecutive > 0:
                     # 2.Ra:  Ô bị chặn sau khi đếm. Tính điểm sau đó reset lại.
-                    score += self.evaluateGameSituation(consecutive, blocks, ForX == playersTurn)
+                    score += self.getConsecutiveSetScore(consecutive, blocks, ForX == playersTurn)
                     consecutive = 0
                     blocks = 2
                 else :
@@ -144,13 +144,13 @@ class AI:
                     blocks = 2
             # 3. Ra: nhưng lúc này đang ở cuối. Nếu liên tục thì vẫn tính cho đến
             if consecutive > 0:
-                score += self.evaluateGameSituation(consecutive, blocks, ForX == playersTurn)
+                score += self.getConsecutiveSetScore(consecutive, blocks, ForX == playersTurn)
             # reset lại để tiếp tục chạy cho dòng tiếp theo
             consecutive = 0
             blocks = 2
         return score
 
-    def calculateDiagonalScore(self, boardMatrix, ForX, playersTurn):
+    def evaluateDiagonal(self, boardMatrix, ForX, playersTurn):
         score = 0
         consecutive = 0
         blocks = 2
@@ -175,20 +175,20 @@ class AI:
                     elif boardMatrix[i][j] == 0:
                         if consecutive > 0:
                             blocks -= 1
-                            score += self.evaluateGameSituation(consecutive, blocks, ForX == playersTurn)
+                            score += self.getConsecutiveSetScore(consecutive, blocks, ForX == playersTurn)
                             consecutive = 0
                             blocks = 1
                         else:
                             blocks = 1
                     else:
                         if consecutive > 0:
-                            score += self.evaluateGameSituation(consecutive, blocks, ForX == playersTurn)
+                            score += self.getConsecutiveSetScore(consecutive, blocks, ForX == playersTurn)
                             consecutive = 0
                             blocks = 2
                         else:
                             blocks = 2
             if(consecutive > 0):
-                score += self.evaluateGameSituation(consecutive, blocks, ForX == playersTurn)
+                score += self.getConsecutiveSetScore(consecutive, blocks, ForX == playersTurn)
             consecutive = 0
             blocks = 2
         # Đường chéo \
@@ -203,33 +203,33 @@ class AI:
                     elif boardMatrix[i][j] == 0:
                         if consecutive > 0:
                             blocks -= 1
-                            score += self.evaluateGameSituation(consecutive, blocks, ForX == playersTurn)
+                            score += self.getConsecutiveSetScore(consecutive, blocks, ForX == playersTurn)
                             consecutive = 0
                             blocks = 1
                         else:
                             blocks = 1
                     else:
                         if consecutive > 0:
-                            score += self.evaluateGameSituation(consecutive, blocks, ForX == playersTurn)
+                            score += self.getConsecutiveSetScore(consecutive, blocks, ForX == playersTurn)
                             consecutive = 0
                             blocks = 2
                         else:
                             blocks = 2
             if(consecutive > 0):
-                score += self.evaluateGameSituation(consecutive, blocks, ForX == playersTurn)
+                score += self.getConsecutiveSetScore(consecutive, blocks, ForX == playersTurn)
             consecutive = 0
             blocks = 2
         return score
     
     # Tính điểm thế trận
-    def calculateTotalScore(self, boardMatrix, ForX, playersTurn):
+    def getScore(self, boardMatrix, ForX, playersTurn):
         score = 0
-        score += self.calculateHorizontalScore(boardMatrix, ForX, playersTurn)
-        score += self.calculateVerticalScore(boardMatrix, ForX, playersTurn)
-        score += self.calculateDiagonalScore(boardMatrix, ForX, playersTurn)
+        score += self.evaluateHorizontal(boardMatrix, ForX, playersTurn)
+        score += self.evaluateVertical(boardMatrix, ForX, playersTurn)
+        score += self.evaluateDiagonal(boardMatrix, ForX, playersTurn)
         return score
 
-    def addNumpyArrays(self, nparray, nparray2):
+    def addNParray(self, nparray, nparray2):
         if np.size(nparray) == 0:
             nparray=np.array([nparray2])
         elif not (nparray2 in nparray.tolist()):
@@ -237,7 +237,7 @@ class AI:
         return nparray
     
     # Tìm những ô trống xung quanh XO
-    def findPossibleMoves(self, boardMatrix) :
+    def generateMoves(self, boardMatrix) :
         moveList = np.array([])
         boardSize = self.size
         borad = np.array(boardMatrix)
@@ -249,60 +249,58 @@ class AI:
                 if x > 0:
                     if y > 0:
                         if boardMatrix[x-1][y-1] == 0 :
-                            moveList = self.addNumpyArrays(moveList,[x-1,y-1])
+                            moveList = self.addNParray(moveList,[x-1,y-1])
                     if y < boardSize-1:
                         if boardMatrix[x-1][y+1] == 0 :
-                            moveList = self.addNumpyArrays(moveList,[x-1,y+1])
+                            moveList = self.addNParray(moveList,[x-1,y+1])
                     if boardMatrix[x-1][y] == 0:
-                        moveList = self.addNumpyArrays(moveList,[x-1,y])
+                        moveList = self.addNParray(moveList,[x-1,y])
                 if x < boardSize-1:
                     if y > 0:
                         if boardMatrix[x+1][y-1] == 0:
-                            moveList = self.addNumpyArrays(moveList,[x+1,y-1])
+                            moveList = self.addNParray(moveList,[x+1,y-1])
                     if y < boardSize-1:
                         if boardMatrix[x+1][y+1] == 0 :
-                            moveList = self.addNumpyArrays(moveList,[x+1,y+1])
+                            moveList = self.addNParray(moveList,[x+1,y+1])
                     if boardMatrix[x+1][y] == 0:
-                        moveList = self.addNumpyArrays(moveList,[x+1,y])
+                        moveList = self.addNParray(moveList,[x+1,y])
                 if y > 0:
                     if boardMatrix[x][y-1] == 0:
-                        moveList = self.addNumpyArrays(moveList,[x,y-1])
+                        moveList = self.addNParray(moveList,[x,y-1])
                 if y < boardSize-1:
                     if boardMatrix[x][y+1] == 0:
-                        moveList = self.addNumpyArrays(moveList,[x,y+1])
+                        moveList = self.addNParray(moveList,[x,y+1])
         return moveList
 
     # Tính tỉ lệ điểm bot và ng chơi
-    def calculateScoreRatio(self, boardMatrix, playersTurn):
-        blackScore = self.calculateTotalScore(boardMatrix, self.player, playersTurn)
-        whiteScore = self.calculateTotalScore(boardMatrix, not self.player, playersTurn)
+    def evaluateBoardForWhite(self, boardMatrix, playersTurn):
+        blackScore = self.getScore(boardMatrix, True, playersTurn)
+        whiteScore = self.getScore(boardMatrix, False, playersTurn)
         if blackScore == 0:
             return whiteScore
         return whiteScore / blackScore
 
     # Tạo ra bàn cờ giả sử lượt đánh
-    def simulateNextMove(self, board, move, isX):
+    def playNextMove(self, board, move, isX):
         dummyBoard = copy.deepcopy(board)
         dummyBoard[move[0]][move[1]]= 1 if isX else -1
         return dummyBoard
 
     # Thuật toán minimax
-    def applyMinimaxAlgorithm(self, depth, board, max, alpha, beta):
+    def minimaxSearchAB(self, depth, board, max, alpha, beta):
         if depth == 0:
-            return [self.calculateScoreRatio(board, not max), None, None]
+            return [self.evaluateBoardForWhite(board, not max), None, None]
         # Danh sách nước đi
-        moves = self.findPossibleMoves(board)
+        moves = self.generateMoves(board)
         if len(moves) == 0:
-            return [self.calculateScoreRatio(board, not max), None, None]
+            return [self.evaluateBoardForWhite(board, not max), None, None]
         bestMove = [0, 0, 0]
         if max:
             bestMove[0] = -1.0
             for move in moves:
                 # Chơi thử với move hiện tại
-                if(self.player == True):
-                    dummyBoard = self.simulateNextMove(board, move, False)
-                else:  dummyBoard = self.simulateNextMove(board, move, True)
-                tempMove = self.applyMinimaxAlgorithm(depth-1, dummyBoard, not max, alpha, beta)
+                dummyBoard = self.playNextMove(board, move, False)
+                tempMove = self.minimaxSearchAB(depth-1, dummyBoard, not max, alpha, beta)
                 # Cập nhật alpha
                 if ((tempMove[0]) > alpha) :
                     alpha = (tempMove[0])
@@ -319,10 +317,8 @@ class AI:
             bestMove[1] = moves[0][0]
             bestMove[2] = moves[0][1]
             for move in moves:
-                if(self.player == True):
-                    dummyBoard = self.simulateNextMove(board, move, True)
-                else:  dummyBoard = self.simulateNextMove(board, move, False)
-                tempMove = self.applyMinimaxAlgorithm(depth-1, dummyBoard, not max, alpha, beta)
+                dummyBoard = self.playNextMove(board, move, True)
+                tempMove = self.minimaxSearchAB(depth-1, dummyBoard, not max, alpha, beta)
                 # Cập nhật beta
                 if ((tempMove[0]) < beta) :
                     beta = (tempMove[0])
@@ -336,63 +332,63 @@ class AI:
         return bestMove
 
     # Tìm nước đi thắng của đối thủ để chặn
-    def findLosingMove(self, board):
-        moves = self.findPossibleMoves(board)
+    def searchLoseMove(self, board):
+        moves = self.generateMoves(board)
         losingMove = [None, None, None]
         if(self.player == True):
             for move in moves:
-                dummyBoard = self.simulateNextMove(board, move, True)
-                if self.calculateTotalScore(dummyBoard, True, False) >= self.winScore:
+                dummyBoard = self.playNextMove(board, move, True)
+                if self.getScore(dummyBoard, True, False) >= self.winScore:
                     losingMove[1] = move[0]
                     losingMove[2] = move[1]
                     return losingMove
             return losingMove
         else:
             for move in moves:
-                dummyBoard = self.simulateNextMove(board, move, False)
-                if self.calculateTotalScore(dummyBoard, False, False) >= self.winScore:
+                dummyBoard = self.playNextMove(board, move, False)
+                if self.getScore(dummyBoard, False, False) >= self.winScore:
                     losingMove[1] = move[0]
                     losingMove[2] = move[1]
                     return losingMove
             return losingMove
 
     # Tìm nước đi thắng
-    def findWinningMove(self, board):
-        moves = self.findPossibleMoves(board)
+    def searchWinMove(self, board):
+        moves = self.generateMoves(board)
         winningMove = [None, None, None]
         if(self.player == True):
             for move in moves:
-                dummyBoard = self.simulateNextMove(board, move, False)
-                if self.calculateTotalScore(dummyBoard, False, False) >= self.winScore:
+                dummyBoard = self.playNextMove(board, move, False)
+                if self.getScore(dummyBoard, False, False) >= self.winScore:
                     winningMove[1] = move[0]
                     winningMove[2] = move[1]
                     return winningMove
             return winningMove
         else:
             for move in moves:
-                dummyBoard = self.simulateNextMove(board, move, True)
-                if self.calculateTotalScore(dummyBoard, True, False) >= self.winScore:
+                dummyBoard = self.playNextMove(board, move, True)
+                if self.getScore(dummyBoard, True, False) >= self.winScore:
                     winningMove[1] = move[0]
                     winningMove[2] = move[1]
                     return winningMove
             return winningMove
     # Đề xuất lượt đánh cho bot
-    def determineNextMove(self, board, depth):
+    def calcNextMove(self, board, depth):
         checkboard = np.array(board)
         checkboard = np.where(checkboard != 0)
         
         if(len(checkboard[0])==0):
             return (int(self.size/2),int(self.size/2))
 
-        bestMove = self.findWinningMove(board)
-        badMove = self.findLosingMove(board)
+        bestMove = self.searchWinMove(board)
+        badMove = self.searchLoseMove(board)
         move = (0, 0)
         if bestMove[1] != None and bestMove[2] != None:
             move = (bestMove[1], bestMove[2])
         elif badMove[1] != None and badMove[2] != None:
             move = (badMove[1], badMove[2])
         else:
-            bestMove = self.applyMinimaxAlgorithm(depth, board, True, -1.0, self.winScore)
+            bestMove = self.minimaxSearchAB(depth, board, True, -1.0, self.winScore)
             if bestMove[1] == None:
                 move = None
             else:
